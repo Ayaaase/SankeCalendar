@@ -344,11 +344,22 @@
   .stack.calendar-up .back-layer{z-index:3;transform:translateY(0) scale(1);opacity:1;pointer-events:auto;box-shadow:0 24px 50px -20px rgba(0,0,0,.7);}
   .layer-toggle{
     display:flex;align-items:center;justify-content:center;gap:6px;
-    margin:-4px auto 14px;width:fit-content;background:var(--panel-3);border:1px solid var(--line);
+    margin:14px auto 0;width:fit-content;background:var(--panel-3);border:1px solid var(--line);
     color:var(--ink-dim);border-radius:999px;font-size:11px;padding:5px 14px;cursor:pointer;
   }
   .layer-toggle:hover{color:var(--ink);border-color:#3a4656;}
   .layer-toggle .kbd{border:1px solid var(--line);border-radius:4px;padding:0 5px;font-size:10px;}
+
+  @media (max-width:720px){
+    .layer-toggle{
+      position:sticky;bottom:14px;z-index:20;
+      width:calc(100% - 8px);max-width:360px;
+      margin:16px auto 0;padding:13px 18px;font-size:14px;font-weight:700;
+      box-shadow:0 10px 26px -8px rgba(0,0,0,.55);
+      background:var(--afternoon-soft);color:var(--afternoon);border-color:var(--afternoon);
+    }
+    .layer-toggle .kbd{display:none;}
+  }
 
   /* ================= TAG MANAGER ================= */
   .tag-manager{margin-top:12px;padding-top:12px;border-top:1px dashed var(--line);display:flex;flex-direction:column;gap:8px;}
@@ -461,8 +472,6 @@
         </div>
         <div class="tag-manager hidden" id="tagManager"></div>
       </section>
-
-      <button type="button" class="layer-toggle" id="layerToggleBtn">▲ 打开日历 <span class="kbd">Space</span></button>
     </div>
 
     <div class="layer back-layer" id="backLayer">
@@ -529,6 +538,8 @@
       </section>
     </div>
   </div>
+
+  <button type="button" class="layer-toggle" id="layerToggleBtn">▲ 打开日历 <span class="kbd">Space</span></button>
 </div>
 
 <script>
