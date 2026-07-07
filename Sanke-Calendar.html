@@ -1292,29 +1292,41 @@
     renderCalendar();
   });
 
+  var ARC_CX = 20, ARC_CY = 22, ARC_R = 16;
+  function arcPolarPoint(angleDeg){
+    var rad = angleDeg * Math.PI / 180;
+    return {
+      x: (ARC_CX + ARC_R * Math.cos(rad)).toFixed(2),
+      y: (ARC_CY - ARC_R * Math.sin(rad)).toFixed(2)
+    };
+  }
+  function arcSegPath(angleStartDeg, angleEndDeg){
+    var p1 = arcPolarPoint(angleStartDeg), p2 = arcPolarPoint(angleEndDeg);
+    return "M"+p1.x+","+p1.y+" A"+ARC_R+","+ARC_R+" 0 0,1 "+p2.x+","+p2.y;
+  }
+
   function buildArcSVG(dateStr, isToday){
-    var counts = PERIODS.map(function(p){
-      var list = dayData(dateStr)[p.key];
-      var total = list.length;
-      var done = list.filter(function(x){return x.done;}).length;
-      return {total:total, done:done};
-    });
-    var segPaths = [
-      "M4,22 A16,16 0 0,1 12,8.14",
-      "M12,8.14 A16,16 0 0,1 28,8.14",
-      "M28,8.14 A16,16 0 0,1 36,22"
-    ];
-    var colors = ["var(--morning)","var(--afternoon)","var(--evening)"];
     var svg = '<svg viewBox="0 0 40 24">';
-    for(var i=0;i<3;i++){
-      var c = counts[i];
-      var cls = "seg ";
-      if(c.total===0) cls += "seg-empty";
-      else if(c.done===c.total) cls += "seg-done";
-      else cls += "seg-pending";
-      var strokeAttr = (c.total===0) ? "" : ' stroke="'+colors[i]+'"';
-      svg += '<path class="'+cls+'" d="'+segPaths[i]+'"'+strokeAttr+'></path>';
-    }
+    PERIODS.forEach(function(p, i){
+      var pb = PB[p.key];
+      var periodAngleStart = 180 - i*60;
+      var periodAngleEnd = 120 - i*60;
+      svg += '<path class="seg seg-empty" d="'+arcSegPath(periodAngleStart, periodAngleEnd)+'"></path>';
+
+      var list = dayData(dateStr)[p.key].slice().sort(function(a,b){return a.start-b.start;});
+      list.forEach(function(task){
+        var fracStart = (task.start - pb.start) / (pb.end - pb.start);
+        var fracEnd = (task.start + task.duration - pb.start) / (pb.end - pb.start);
+        fracStart = Math.max(0, Math.min(1, fracStart));
+        fracEnd = Math.max(0, Math.min(1, fracEnd));
+        if(fracEnd <= fracStart) return;
+        var angleStart = periodAngleStart - fracStart*60;
+        var angleEnd = periodAngleStart - fracEnd*60;
+        var color = (findTag(task.tag) && findTag(task.tag).color) ? tagColor(task.tag) : "var(--ink-dim)";
+        var cls = "seg " + (task.done ? "seg-done" : "seg-pending");
+        svg += '<path class="'+cls+'" d="'+arcSegPath(angleStart, angleEnd)+'" stroke="'+color+'"></path>';
+      });
+    });
     svg += '</svg>';
     return svg;
   }
