@@ -131,7 +131,7 @@
 
   .tl-period{display:flex;flex-direction:column;}
   .tl-head{display:flex;align-items:center;gap:7px;margin-bottom:8px;}
-  .tl-head .dot{width:9px;height:9px;border-radius:50%;flex:none;}
+  .tl-head .dot{width:9px;height:9px;border-radius:50%;flex:none;background:var(--ink-dim);}
   .tl-head h3{font-size:12.5px;font-weight:700;letter-spacing:.4px;margin:0;flex:none;}
   .tl-head .range{font-size:10.5px;color:var(--ink-dim);flex:1;}
   .tl-add{
@@ -547,9 +547,9 @@
   "use strict";
 
   var PERIODS = [
-    {key:"morning",   label:"上午", color:"var(--morning)", startH:6,  endH:12},
-    {key:"afternoon", label:"下午", color:"var(--afternoon)", startH:12, endH:18},
-    {key:"evening",   label:"晚上", color:"var(--evening)", startH:18, endH:24}
+    {key:"morning",   label:"上午", startH:6,  endH:12},
+    {key:"afternoon", label:"下午", startH:12, endH:18},
+    {key:"evening",   label:"晚上", startH:18, endH:24}
   ];
   var PB = {};
   PERIODS.forEach(function(p){ PB[p.key] = {start:p.startH*60, end:p.endH*60}; });
@@ -809,7 +809,7 @@
       var head = document.createElement("div");
       head.className = "tl-head";
       head.innerHTML =
-        '<span class="dot" style="background:'+p.color+'"></span>'+
+        '<span class="dot"></span>'+
         '<h3>'+p.label+'</h3>'+
         '<span class="range">'+pad(p.startH)+':00–'+(p.endH===24?"24":pad(p.endH))+':00</span>';
       var addBtn = document.createElement("button");
